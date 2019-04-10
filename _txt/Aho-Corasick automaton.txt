@@ -1,0 +1,74 @@
+char str[N_STRING][MAX_LEN];
+int n,sz,son[N_NODE][ALPHABET],par[N_NODE],alp[N_NODE],fail[N_NODE],que[N_NODE],term[N_NODE],mat[LENGTH],trans[N_NODE][ALPHABET];
+
+void build_trie()
+{
+    int i,j,u;
+    memset(son[1],0,sizeof(son[1]));
+    term[1]=0;
+    for(sz=1,i=1;i<=n;i++)
+    {
+        for(u=1,j=0;str[i][j];j++)
+        {
+            if(!son[u][str[i][j]-'a'])      // lowercase only
+            {
+                son[u][str[i][j]-'a']=++sz;
+                memset(son[sz],0,sizeof(son[sz]));
+                par[sz]=u;
+                alp[sz]=str[i][j]-'a';
+                term[sz]=0;
+            }
+            u=son[u][str[i][j]-'a'];
+        }
+        term[u]=1;
+    }
+}
+
+void build_ac()
+{
+    int front=1,rear=1,u,v,j;
+    que[1]=1;
+    while(front<=rear)
+    {
+        u=que[front++];
+        if(u==1 || par[u]==1) fail[u]=1;
+        else
+        {
+            for(v=fail[par[u]];v>1;v=fail[v])
+                if(son[v][alp[u]])
+                {
+                    fail[u]=son[v][alp[u]];
+                    break;
+                }
+            if(v==1) fail[u]=(son[1][alp[u]] ? son[1][alp[u]] : 1);
+        }
+        term[u]|=term[fail[u]];
+        for(j=0;j<26;j++)
+            if(u==1) trans[u][j]=(son[u][j] ? son[u][j] : 1);
+            else trans[u][j]=(son[u][j] ? son[u][j] : trans[fail[u]][j]); 
+        for(j=0;j<26;j++)       // lowercase only
+            if(son[u][j]) que[++rear]=son[u][j];
+    }
+}
+
+void match(char *str)
+{
+    int i,u,v;
+    char x;
+    for(u=1,i=0;str[i];i++)
+    {
+        x=str[i]-'a';
+
+        for(v=u;v>1;v=fail[v])
+            if(son[v][x])
+            {
+                mat[i]=son[v][x];
+                break;
+            }
+        if(v==1) mat[i]=(son[1][x] ? son[1][x] : 1);
+
+        mat[i]=trans[u][x];        // with array trans[][]
+
+        u=mat[i];
+    }
+}

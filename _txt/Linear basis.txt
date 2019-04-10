@@ -1,0 +1,28 @@
+int l,b[BIT_LENGTH];
+// l (maximal bit length) needs to be initialized; b[] should be set to 0 initially
+
+void insert(int x)
+{
+    int i,j;
+    for(i=l-1;i>=0;i--)
+    {
+        if(!(x&(1<<i))) continue;
+        if(b[i]) x^=b[i];
+        else
+        {
+            for(j=0;j<i;j++) x^=b[j];
+            for(j=i+1;j<l;j++)
+                if(b[j]&(1<<i)) b[j]^=x;
+            b[i]=x;
+            break;
+        }
+    }
+}
+
+int find(int x)
+{
+    int i;
+    for(i=l-1;i>=0;i--)
+        if(x&(1<<i)) x^=b[i];
+    return x ? 0 : 1;
+}

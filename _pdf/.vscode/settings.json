@@ -1,0 +1,12 @@
+{
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "toolchain",
+            "tools": [
+                "Step 1: xelatex",
+                "Step 3: xelatex",
+                "Step 4: xelatex"
+            ]
+        }
+    ]
+}

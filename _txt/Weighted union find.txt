@@ -1,0 +1,25 @@
+int n,k,f[N_NODE],d[N_NODE];  // initialize f[i] to i, d[i] to 0
+
+int find(int u)
+{
+    if(f[u]==u) return u;
+    int t=find(f[u]);
+    d[u]=(d[u]+d[f[u]])%MOD;
+    f[u]=t;
+    return t;
+}
+
+int dist(int u)
+{
+    find(u);
+    return d[u];
+}
+
+int link(int u,int v,int l)     // link u to v (l is the distance from u to v)
+{
+    int fu=find(u),fv=find(v);
+    if(fu==fv) return 0;       // return 0 if u and v have been in the same set
+    f[fu]=fv;
+    d[fu]=(l+d[v]-d[u]+MOD)%MOD;
+    return 1;
+}

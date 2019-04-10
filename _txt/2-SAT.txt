@@ -1,0 +1,45 @@
+int solve()
+{
+    memset(dep,0,sizeof(dep));
+    for(dfn[0]=scc[0]=cc[0]=0,lv=0,i=1;i<=m*2;i++)
+        if(!dep[i])
+        {
+            ++cc[0];
+            dep[i]=1;
+            dfs(i);
+        }
+    for(i=1;i<=m;i++)
+        if(scc[i]==scc[i+m]) return 0;
+        else if(cc[i]<cc[i+m] || cc[i]==cc[i+m] && dep[i]>dep[i+m]) chosen[i]=1;
+        else chosen[i]=0;
+    return 1;
+}
+
+void dfs(int u)
+{
+    low[u]=dfn[u]=++dfn[0];
+    scc[u]=-1;
+    cc[u]=cc[0];
+    stk[++lv]=u;
+    int v,e;
+    for(e=first[u];e;e=nxt[e])
+    {
+        v=tail[e];
+        if(!dep[v])
+        {
+            dep[v]=dep[u]+1;
+            dfs(v);
+            low[u]=min(low[u],low[v]);
+        }
+        else if(scc[v]==-1)
+            low[u]=min(low[u],low[v]);
+    }
+    if(low[u]==dfn[u])
+    {
+        scc[0]++;
+        while(stk[lv]!=u)
+            scc[stk[lv--]]=scc[0];
+        scc[stk[lv--]]=scc[0];
+    }
+}
+

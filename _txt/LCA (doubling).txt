@@ -1,0 +1,48 @@
+LL sz,first[N_NODE],nxt[N_NODE*2],tail[N_NODE*2],len[N_NODE*2],p[N_NODE][LOG_N_NODE],g[N_NODE][LOG_N_NODE],dep[N_NODE];
+
+void addedge(LL u,LL v,LL w)
+{
+    sz++;
+    tail[sz]=v;  len[sz]=w;
+    nxt[sz]=first[u];  first[u]=sz;
+}
+
+void dfs(LL u)
+{
+    LL v,e,i;
+    for(i=1;i<=LOG_N;i++)
+    {
+        p[u][i]=p[p[u][i-1]][i-1];
+        g[u][i]=max(g[u][i-1],g[p[u][i-1]][i-1]);
+    }
+    for(e=first[u];e;e=nxt[e])
+    {
+        v=tail[e];
+        if(dep[v]) continue;
+        p[v][0]=u;  g[v][0]=len[e];
+        dep[v]=dep[u]+1;
+        dfs(v);
+    }
+}
+
+LL query(LL u,LL v)
+{
+    if(dep[u]>dep[v]) swap(u,v);
+    LL i,ans=0;
+    for(i=LOG_N;i>=0;i--)
+        if(dep[v]-dep[u]>=(1<<i))
+        {
+            ans=max(ans,g[v][i]);
+            v=p[v][i];
+        }
+    if(u==v) return ans;
+          // return u;
+    for(i=LOG_N;i>=0;i--)
+        if(p[u][i]!=p[v][i])
+        {
+            ans=max(ans,max(g[u][i],g[v][i]));
+            u=p[u][i];  v=p[v][i];
+        }
+    return max(ans,max(g[u][0],g[v][0]));
+    // return p[u][0];
+}

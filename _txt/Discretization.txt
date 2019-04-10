@@ -1,0 +1,22 @@
+int n,l[N_SEG],r[N_SEG],l2[N_SEG],r2[N_SEG],x[N_SEG*2];
+
+void discrete()
+{
+    int i,j;
+    for(i=1;i<=n;i++)
+        x[2*i-1]=l[i],x[2*i]=r[i];
+    std::sort(x+1,x+2*n+1);
+    int *arr[2]={l,r},*arrn[2]={l2,r2},lb,ub,mid;
+    for(i=1;i<=n;i++)
+        for(j=0;j<=1;j++)
+        {
+            lb=1;  ub=n*2;
+            while(lb<ub)
+            {
+                mid=(lb+ub)/2;
+                if(arr[j][i]<=x[mid]) ub=mid;
+                else lb=mid+1;
+            }
+            arrn[j][i]=lb;
+        }
+}

@@ -1,0 +1,53 @@
+int n,sz,first[N_NODE],nxt[N_EDGE],tail[N_EDGE],cnt,l,sz2,f2[N_NODE],n2[N_EDGE],t2[N_EDGE],scc[N_NODE],s[N_NODE],stk[N_NODE],dfn[N_NODE],low[N_NODE];
+
+void addedge(int u,int v)
+{
+    tail[++sz]=v;
+    nxt[sz]=first[u];  first[u]=sz;
+}
+
+void addedge2(int u,int v)
+{
+    t2[++sz2]=v;
+    n2[sz2]=f2[u];  f2[u]=sz2;
+}
+
+void dfs(int u)
+{
+    scc[u]=-1;
+    low[u]=dfn[u]=++dfn[0];
+    stk[++l]=u;
+    int v,e;
+    for(e=first[u];e;e=nxt[e])
+    {
+        v=tail[e];
+        if(scc[v]>0) continue;
+        if(!scc[v]) dfs(v);
+        low[u]=std::min(low[u],low[v]);
+    }
+    if(low[u]==dfn[u])
+    {
+        s[++cnt]=0;
+        while(stk[l]!=u)
+        {
+            scc[stk[l--]]=cnt;
+            s[cnt]++;
+        }
+        scc[stk[l--]]=cnt;
+        s[cnt]++;
+    }
+}
+
+void scc_dec()
+{
+    memset(scc,0,sizeof(scc));
+    int i;
+    for(cnt=0,l=0,i=1;i<=n;i++)
+        if(!scc[i]) dfs(i);
+    memset(f2,0,sizeof(f2));
+    int u,e;
+    for(sz2=0,u=1;u<=n;u++)
+        for(e=first[u];e;e=nxt[e])
+            if(scc[u]!=scc[tail[e]])
+                addedge2(scc[u],scc[tail[e]]);
+}

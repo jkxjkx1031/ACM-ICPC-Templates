@@ -1,0 +1,6 @@
+int power(int x,int e)
+{
+    if(!e) return 1;
+    LL res=power(x,e/2);
+    return (e%2 ? res*res%M*x%M : res*res%M);
+}

@@ -1,0 +1,14 @@
+void manacher()
+{
+    LL i,j,k;
+    for(i=2,j=1,r[1]=0;i<=len;i++)
+    {
+        if(i<=j+r[j]) r[i]=min(r[j*2-i],j+r[j]-i);
+        else r[i]=0;
+        if(i+r[i]<j+r[j]) continue;
+        for(k=r[i]+1;i+k<=len && i-k>=1;k++)
+            if(str[i+k]==str[i-k]) r[i]++;
+            else break;
+        j=i;
+    }
+}
