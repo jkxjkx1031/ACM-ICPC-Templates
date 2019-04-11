@@ -1,0 +1,19 @@
+int n,b,arr[SIZE],minv[LOG_SIZE][SIZE*2];
+
+void rmq()
+{
+    b=sizeof(unsigned int)*8-__builtin_clz(n)-1;        // int __builtin_clz(unsigned int x)
+    memset(minv,0x3f,sizeof(minv));
+    int i,j;
+    for(i=1;i<=n;i++)
+        minv[0][i]=arr[i];
+    for(i=1;i<=b;i++)
+        for(j=1;j<=n;j++)
+            minv[i][j]=std::min(minv[i-1][j],minv[i-1][j+(1<<(i-1))]);
+}
+
+int query(int l,int r)
+{
+    int w=sizeof(unsigned int)*8-__builtin_clz(r-l+1)-1;
+    return std::min(minv[w][l],minv[w][r-(1<<w)+1]);
+}

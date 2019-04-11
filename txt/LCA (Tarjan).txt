@@ -1,0 +1,78 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+const int INF=1000000000;
+struct PLAN
+{
+    int s,t,time,idx;
+    bool operator<(const PLAN &rhs) const
+    {
+        return time<rhs.time;
+    }
+}
+plan[N_QRY];
+int n,m,nq,firstq[N_NODE],nxtq[N_QRY*2],to[N_QRY*2],idx[N_QRY*2],lca[N_QRY],sz,first[N_NODE],nxt[N_NODE*2],tail[N_NODE*2],len[N_NODE*2],vis[N_NODE],f[N_NODE];
+
+void addedge(int u,int v,int l)
+{
+    sz++;
+    tail[sz]=v;  len[sz]=l;
+    nxt[sz]=first[u];  first[u]=sz;
+}
+
+void addqry(int u,int v,int i)
+{
+    nq++;
+    to[nq]=v;  idx[nq]=i;
+    nxtq[nq]=firstq[u];  firstq[u]=nq;
+}
+
+int find(int u)
+{
+    return (f[u]==u ? u : (f[u]=find(f[u])));
+}
+
+void get_lca(int u)
+{
+    vis[u]=1;
+    int q,v,e;
+    for(q=firstq[u];q;q=nxtq[q])
+    {
+        v=to[q];
+        if(!vis[v]) continue;
+        lca[idx[q]]=find(v);
+    }
+    for(e=first[u];e;e=nxt[e])
+    {
+        v=tail[e];
+        if(vis[v]) continue;
+        get_lca(v);
+        f[v]=u;
+    }
+}
+
+int main()
+{
+    scanf("%d%d",&n,&m);
+    memset(first,0,sizeof(first));
+    int i,u,v,l;
+    for(sz=0,i=1;i<=n-1;i++)
+    {
+        scanf("%d%d%d",&u,&v,&l);
+        addedge(u,v,l);  addedge(v,u,l);
+    }
+    memset(firstq,0,sizeof(firstq));
+    for(nq=0,i=1;i<=m;i++)
+    {
+        scanf("%d%d",&u,&v);
+        plan[i].s=u;  plan[i].t=v;
+        plan[i].idx=i;
+        addqry(u,v,i);  addqry(v,u,i);
+    }
+    for(i=1;i<=n;i++) f[i]=i;
+    memset(vis,0,sizeof(vis));
+    get_lca(1);  // 1 is the root
+    return 0;
+}

@@ -1,0 +1,33 @@
+int n,m,fail[LEN_PATTERN],match[LEN],trans[LEN_PATTERN][ALPHABET];
+
+void kmp(int *s1,int *s2)
+{
+    int i,j;
+    for(fail[0]=fail[1]=0,i=2;i<=m;i++)
+    {
+        for(j=fail[i-1];j;j=fail[j])
+            if(s2[j+1]==s2[i])
+            {
+                fail[i]=j+1;
+                break;
+            }
+        if(!j) fail[i]=(s2[1]==s2[i] ? 1 : 0);
+    }
+    memset(trans[0],0,sizeof(trans[0]));
+    trans[0][s2[1]]=1;
+    for(i=1;i<=m;i++)
+        for(j=1;j<=ALPHABET;j++)
+            trans[i][j]=(i<m && s2[i+1]==j) ? i+1 : trans[fail[i]][j];
+    for(match[0]=0,i=1;i<=n;i++)
+    {
+        for(j=match[i-1];j;j=fail[j])
+            if(j+1<=m && s2[j+1]==s1[i])
+            {
+                match[i]=j+1;
+                break;
+            }
+        if(!j) match[i]=(s2[1]==s1[i] ? 1 : 0);
+
+        match[i]=trans[match[i-1]][s1[i]];      // with array trans[][]
+    }
+}

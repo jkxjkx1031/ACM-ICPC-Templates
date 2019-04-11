@@ -1,0 +1,26 @@
+const int BUF_SZ=100000;
+char buf[BUF_SZ+10];
+inline char nc(void)
+{
+    static char *pr=buf,*pend=buf;
+    if(pr==pend)
+    {
+        pr=buf;
+        pend=pr+fread(buf,1,BUF_SZ,stdin);
+        if(pr==pend) return EOF;
+        else return *pr++;
+    }
+    return *pr++;
+}
+inline int readint(int *x)
+{
+    static char ch;
+    ch=nc();
+    while(ch!=EOF && (ch<'0' || ch>'9')) ch=nc();
+    if(ch==EOF) return 0;
+    for(*x=0;ch>='0' && ch<='9';ch=nc())
+        *x=*x*10+ch-'0';
+    return 1;
+}
+
+/*when reading from files, use "rb" mode!!!*/

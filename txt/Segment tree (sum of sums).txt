@@ -1,0 +1,25 @@
+void build(int k,int l,int r)
+{
+    if(l==r)
+    {
+        ls[k]=rs[k]=ss[k]=sum[k]=a[l];
+        return;
+    }
+    int mid=(l+r)/2;
+    build(k*2,l,mid);  build(k*2+1,mid+1,r);
+    sum[k]=(sum[k*2]+sum[k*2+1])%M;
+    ls[k]=(ls[k*2]+ls[k*2+1]+sum[k*2]*(r-mid)%M)%M;
+    rs[k]=(rs[k*2]+rs[k*2+1]+sum[k*2+1]*(mid-l+1)%M)%M;
+    ss[k]=(ss[k*2]+ss[k*2+1]+rs[k*2]*(r-mid)%M+ls[k*2+1]*(mid-l+1)%M)%M;
+}
+
+LL query(int p,int q,int k,int l,int r)
+{
+    if(p<=l && q>=r)
+        return (ss[k]+sum[k]*(l-p)%M*(q-r)%M+ls[k]*(l-p)%M+rs[k]*(q-r)%M)%M;
+    int mid=(l+r)/2;
+    LL res=0;
+    if(p<=mid) res=(res+query(p,q,k*2,l,mid))%M;
+    if(q>mid) res=(res+query(p,q,k*2+1,mid+1,r))%M;
+    return res;
+}

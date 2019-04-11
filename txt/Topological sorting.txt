@@ -1,0 +1,37 @@
+int sz,first[N_NODE],nxt[N_EDGE],tail[N_EDGE],ideg[N_NODE],vis[N_NODE],topo[N_NODE],q[N_NODE];
+
+void addedge(int u,int v)
+{
+    tail[++sz]=v;
+    nxt[sz]=first[u];  first[u]=sz;
+    ideg[v]++;
+}
+
+int toposort()
+{
+    int front=1,rear=0,i,u,v,e;
+    memset(vis,0,sizeof(vis));
+    for(i=1;i<=n;i++)
+        if(!ideg[i])
+        {
+            q[++rear]=i;
+            vis[i]=1;
+        }
+    i=0;
+    while(front<=rear)
+    {
+        u=q[front++];
+        topo[++i]=u;
+        for(e=first[u];e;e=nxt[e])
+        {
+            v=tail[e];
+            ideg[v]--;
+            if(!ideg[v])
+            {
+                q[++rear]=v;
+                vis[v]=1;
+            }
+        }
+    }
+    return i==n;
+}

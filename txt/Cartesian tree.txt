@@ -1,0 +1,16 @@
+int n,ls[N_NODE],rs[N_NODE],stk[N_NODE];
+
+int carttree(int *a)
+{
+    int i,m=0,rt=0;
+    for(i=1;i<=n;i++)
+    {
+        while(m && a[i]>a[stk[m]]) m--;         // the largest value is the root
+        ls[i]=m ? rs[stk[m]] : rt;
+        rs[i]=0;
+        if(m) rs[stk[m]]=i;
+        else rt=i;
+        stk[++m]=i;
+    }
+    return rt;
+}

@@ -1,7 +1,0 @@
-MAT mpw(MAT m,int e,int sz)
-{
-    if(!e) return MAT(sz,1);
-    MAT t=mpw(m,e/2,sz);
-    if(e%2) return t*t*m;
-    else return t*t;
-}

@@ -1,0 +1,35 @@
+int n,sz,first[N_NODE],nxt[N_NODE*2],tail[N_NODE*2],dep[N_NODE],par[N_NODE],diam[N_NODE];
+
+void dfs(int u)
+{
+    int v,e;
+    for(e=first[u];e;e=nxt[e])
+    {
+        v=tail[e];
+        if(dep[v]) continue;
+        par[v]=u;
+        dep[v]=dep[u]+1;
+        dfs(v);
+    }
+}
+
+int diameter(int &rt)   // return length of tree's diameter
+{
+    int i;
+    memset(dep,0,sizeof(dep));
+    dep[1]=1;
+    dfs(1);
+    for(rt=0,i=1;i<=n;i++)
+        if(dep[i]>dep[rt]) rt=i;
+    memset(dep,0,sizeof(dep));
+    dep[rt]=1;
+    dfs(rt);
+    int t=0;
+    for(i=1;i<=n;i++)
+        if(dep[i]>dep[t]) t=i;
+    int u,len=0;
+    for(u=t;u!=rt;u=par[u])
+        diam[++len]=u;
+    diam[++len]=rt;
+    return len;
+}

@@ -1,0 +1,65 @@
+// pay attention to the initial value of cur[]!
+int ne,nv,first[N_NODE],nxt[N_EDGE*2],tail[N_EDGE*2],cap[N_EDGE*2],rev[N_EDGE*2],cur[N_NODE],level[N_NODE],que[N_NODE];
+
+void addedge(int u,int v,int c)
+{
+    ne++;
+    tail[ne]=v;  cap[ne]=c;
+    nxt[ne]=first[u];  first[u]=ne;
+    ne++;
+    tail[ne]=u;  cap[ne]=0;
+    nxt[ne]=first[v];  first[v]=ne;
+    rev[ne]=ne-1;  rev[ne-1]=ne;
+}
+
+void bfs(int s)
+{
+    memset(level,-1,sizeof(level));
+    level[s]=0;
+    int front=1,rear=1,u,v,e;
+    que[1]=s;
+    while(front<=rear)
+    {
+        u=que[front++];
+        for(e=first[u];e;e=nxt[e])
+        {
+            v=tail[e];
+            if(cap[e]==0 || level[v]>=0) continue;
+            level[v]=level[u]+1;
+            que[++rear]=v;
+        }
+    }
+}
+
+int dfs(int u,int t,int f)
+{
+    if(u==t) return f;
+    int v,d,&e=cur[u];
+    for(;e;e=nxt[e])
+    {
+        v=tail[e];
+        if(cap[e]==0 || level[u]>=level[v]) continue;
+        d=dfs(v,t,std::min(f,cap[e]));
+        if(d>0)
+        {
+            cap[e]-=d;
+            cap[rev[e]]+=d;
+            return d;
+        }
+    }
+    return 0;
+}
+
+int dinic(int s,int t)
+{
+    int ans=0,i,f;
+    for(;;)
+    {
+        bfs(s);
+        if(level[t]<0) break;
+        for(i=1;i<=nv;i++)
+            cur[i]=first[i];  // pay attention to the initial value of cur[]!
+        while((f=dfs(s,t,INF))>0) ans+=f;
+    }
+    return ans;
+}

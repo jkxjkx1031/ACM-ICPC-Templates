@@ -1,0 +1,10 @@
+double distance(V o,LN *arr,int n)
+{
+    double res=INF;
+    int i;
+    for(i=1;i<=n;i++)
+        if(dcmp(((arr[i].p-o)*arr[i])*((arr[i].q-o)*arr[i]),0)>0)
+            res=std::min(res,std::min((arr[i].p-o).len(),(arr[i].q-o).len()));
+        else res=std::min(res,fabs((arr[i].p-o)^(arr[i].q-o))/V(arr[i]).len());
+    return res;
+}

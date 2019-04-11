@@ -1,0 +1,12 @@
+int nv,ne,dist[N_NODE];
+
+void bellman_ford(int s)
+{
+    int i,u,e;
+    for(i=1;i<=nv;i++) dist[i]=INF;
+    dist[s]=0;
+    for(i=1;i<=nv-1;i++)
+        for(u=1;u<=nv;u++)
+            for(e=first[u];e;e=nxt[e])
+                dist[tail[e]]=std::min(dist[tail[e]],dist[u]+len[e]);
+}

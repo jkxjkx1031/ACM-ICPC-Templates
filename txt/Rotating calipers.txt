@@ -1,0 +1,22 @@
+int n;
+V v[N_VERTEX*2];
+
+inline double area(int i,int j,int k)
+{
+    return fabs(v[i].x*v[j].y+v[j].x*v[k].y+v[k].x*v[i].y-v[j].x*v[i].y-v[k].x*v[j].y-v[i].x*v[k].y);
+}
+
+double maxarea()
+{
+    int i,j,k;
+    double ans=0;
+    for(i=1;i<=n;i++) v[i+n]=v[i];
+    for(i=1;i<=n;i++)
+        for(k=i+2,j=i+1;j<i+n-1;j++)
+        {
+            k=max(k,j+1);
+            while(k<i+n-1 && dcmp(area(i,j,k),area(i,j,k+1))<0) k++;
+            ans=max(ans,area(i,j,k));
+        }
+    return ans;
+}
