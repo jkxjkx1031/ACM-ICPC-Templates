@@ -726,23 +726,13 @@ P mcmf(int s,int t)
 
 \subsection{Hungary}
 \begin{lstlisting}
+int nl,sz,first[N_LEFT],nxt[N_EDGE],tail[N_EDGE],vis[N_RIGHT],from[N_RIGHT];
+
 // edges are linked from left to right only!
 void addedge(int u,int v)
 {
     tail[++sz]=v;
     nxt[sz]=first[u];  first[u]=sz;
-}
-
-int hungary()
-{
-    int ret=0,i;
-    memset(from,0,sizeof(from));
-    for(i=1;i<=nl;i++)
-    {
-        memset(vis,0,sizeof(vis));
-        if(match(i)) ret++;
-    }
-    return ret;
 }
 
 int match(int u)
@@ -760,6 +750,84 @@ int match(int u)
         }
     }
     return 0;
+}
+
+int hungary()
+{
+    int ret=0,i;
+    memset(from,0,sizeof(from));
+    for(i=1;i<=nl;i++)
+    {
+        memset(vis,0,sizeof(vis));
+        if(match(i)) ret++;
+    }
+    return ret;
+}
+\end{lstlisting}
+
+\subsection{Kuhn-Munkres}
+\begin{lstlisting}
+using LL=long long;
+const LL INF=0x3f3f3f3f3f3f3f3f;
+int n,from[N_NODE],vis[N_NODE*2];
+LL lx[N_NODE],ly[N_NODE],edg[N_NODE][N_NODE],slack[N_NODE];
+
+int match(int u,int o)
+{
+    vis[u]=1;
+    int v;
+    for(v=1;v<=n;v++)
+        if(!vis[v+n] && edg[u][v]==lx[u]+ly[v])
+        {
+            vis[v+n]=1;
+            if(!from[v] || match(from[v],o))
+            {
+                if(o) from[v]=u;
+                return 1;
+            }
+        }
+        else slack[v]=std::min(slack[v],lx[u]+ly[v]-edg[u][v]);
+    return 0;
+}
+
+LL km()
+{
+    int i,j;
+    for(i=1;i<=n;i++)
+        for(j=1;j<=n;j++)
+            lx[i]=std::max(lx[i],edg[i][j]);
+    LL d;
+    memset(from,0,sizeof(from));
+    for(i=1;i<=n;i++)
+    {
+        memset(slack,0x3f,sizeof(slack));
+        memset(vis,0,sizeof(vis));
+        if(match(i,1)) continue;
+        for(;;)
+        {
+            for(d=INF,j=1;j<=n;j++)
+                if(!vis[j+n]) d=std::min(d,slack[j]);
+            for(j=1;j<=n;j++)
+                if(vis[j]) lx[j]-=d;
+            for(j=1;j<=n;j++)
+                if(vis[j+n]) ly[j]+=d;
+            for(j=1;j<=n;j++)
+                if(!vis[j+n]) slack[j]-=d;
+            for(j=1;j<=n;j++)
+                if(!vis[j+n] && !slack[j])
+                {
+                    vis[j+n]=1;
+                    if(!from[j] || (!vis[from[j]] && match(from[j],0))) break;
+                }
+            if(j<=n) break;
+        }
+        memset(vis,0,sizeof(vis));
+        match(i,1);
+    }
+    LL res=0;
+    for(i=1;i<=n;i++) res+=lx[i];
+    for(i=1;i<=n;i++) res+=ly[i];
+    return res;
 }
 \end{lstlisting}
 
